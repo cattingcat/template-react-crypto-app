@@ -71,7 +71,7 @@ function App() {
     <div className={styles.App}>
       <header className={styles.App_header}>
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Template react crypto app
         </p>
         <ConnectButton />
       </header>
