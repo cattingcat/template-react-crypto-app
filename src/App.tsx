@@ -5,7 +5,7 @@ import styles from './App.module.css';
 
 function App() {
   const { connector: activeConnector, isConnected, address } = useAccount();
-  const {data: signer} = useSigner();
+  const { data: signer } = useSigner();
 
   const onSign = useCallback(async () => {
     if (activeConnector?.name === 'MetaMask') {
@@ -66,6 +66,28 @@ function App() {
     });
   }, [signer, activeConnector]);
 
+  const onSignViaSignerProviderRequest = useCallback(async () => {
+    if (activeConnector?.name === 'MetaMask') {
+      console.error('MetaMask doesn\'t support signing without sending');
+      return;
+    }
+
+    if (!isConnected) {
+      console.error('Connect wallet first');
+      return;
+    }
+
+    const provider = (signer!.provider! as any).provider;
+    const r = await provider!.request({
+      method: 'eth_signTransaction',
+      params: {
+        from: address,
+        to: '0x0000000000000000000000000000000000000000',
+        value: '0x1',
+      },
+    });
+  }, [signer]);
+
 
   return (
     <div className={styles.App}>
@@ -79,6 +101,7 @@ function App() {
         <button onClick={onSign}> Click me to sign via signer </button>
         <button onClick={onSignViaRequest}> Click me to sign via request </button>
         <button onClick={onSend}> Click me to send tx </button>
+        <button onClick={onSignViaSignerProviderRequest}> Click me to sign via request ro signer provider </button>
       </main>
     </div>
   );
